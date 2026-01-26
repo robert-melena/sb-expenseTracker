@@ -1,13 +1,29 @@
 package com.expensetracker.project.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
 import java.time.LocalDate;
 
+
+
+@Entity
 public class Expense {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long expenseId;
+
     private LocalDate date;
     private Category category;
     private double amount;
     private Payment payment;
+
+    public Expense(){
+
+    }
 
     public Expense(Long expenseId, Category category, double amount, Payment payment,LocalDate date) {
         this.expenseId = expenseId;

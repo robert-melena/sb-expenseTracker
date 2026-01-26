@@ -10,6 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @RestController
+@RequestMapping("/expenses")
 public class ExpenseController {
 
     private ExpenseService expenseService;
@@ -17,19 +18,19 @@ public class ExpenseController {
         this.expenseService = expenseService;
     }
 
-    @GetMapping("/expenses")
+    @GetMapping()
     public ResponseEntity<List<Expense>> getAllExpenses(){
         List<Expense> expenses = expenseService.getAllExpenses();
         return new ResponseEntity<>(expenses, HttpStatus.OK); //response body that is requested AND http status code
     }
 
-    @PostMapping("/expenses")
+    @PostMapping()
     public ResponseEntity<String> createExpense(@RequestBody Expense expense){ //Deserialization... converting Request body String to Object
         expenseService.createExpense(expense);
         return new ResponseEntity<>("Expense Added Successfully",HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/expenses/{expenseId}")
+    @DeleteMapping("/{expenseId}")
     public ResponseEntity<String> deleteExpense(@PathVariable Long expenseId){
          try{
              String status = expenseService.deleteExpense(expenseId);
@@ -39,7 +40,7 @@ public class ExpenseController {
          }
     }
 
-    @PutMapping("/expenses/{expenseId}")
+    @PutMapping("/{expenseId}")
     public ResponseEntity<String> updateExpense(@PathVariable Long expenseId,
                                                 @RequestBody Expense expense){
         try{
