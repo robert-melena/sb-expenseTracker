@@ -34,13 +34,12 @@ public class ExpenseServiceImplementation  implements ExpenseService {
 
     @Override
     public String deleteExpense(Long expenseId){
-       Expense expense = expenseRepository.findAll().stream()
-               .filter(e -> e.getExpenseId().equals(expenseId))
-               .findFirst()
-               .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Resource not found!"));
-
-       expenseRepository.delete(expense);
-       return "ExpenseID{" + expenseId+ "} deleted Successfully!";
+        Optional<Expense> expense = expenseRepository.findById(expenseId);
+        if(expense.isPresent()){
+            expenseRepository.delete(expense.get());
+            return "ExpenseID{" + expenseId+ "} deleted Successfully!";
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Resource NOT FOUND");
     }
 
     @Override
