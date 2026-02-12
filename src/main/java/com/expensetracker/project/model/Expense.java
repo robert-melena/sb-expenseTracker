@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 
 import java.time.LocalDate;
 
@@ -18,6 +20,8 @@ public class Expense {
 
     private LocalDate date;
     private Category category;
+    @Min(0)
+    @Max(10000)
     private double amount;
     private Payment payment;
 

@@ -2,6 +2,7 @@ package com.expensetracker.project.controller;
 
 import com.expensetracker.project.model.Expense;
 import com.expensetracker.project.service.ExpenseService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class ExpenseController {
     }
 
     @PostMapping()
-    public ResponseEntity<String> createExpense(@RequestBody Expense expense){ //Deserialization... converting Request body String to Object
+    public ResponseEntity<String> createExpense(@Valid @RequestBody Expense expense){ //Deserialization... converting Request body String to Object
         expenseService.createExpense(expense);
         return new ResponseEntity<>("Expense Added Successfully",HttpStatus.CREATED);
     }
