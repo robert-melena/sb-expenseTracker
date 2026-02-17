@@ -27,6 +27,12 @@ public class MyGlobalExceptionHandler {
 
         //will return a response entity with all key values fieldName mapped with their correlating errors
         return new ResponseEntity<Map<String,String>>(responses, HttpStatus.BAD_REQUEST);
-
     }
+
+    //Create custom Exception class and add it to here to handle
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<String> resourceNotFoundException(ResourceNotFoundException e){
+        return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
+    }
+
 }

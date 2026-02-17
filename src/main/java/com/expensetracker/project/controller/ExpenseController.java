@@ -6,7 +6,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -33,23 +32,15 @@ public class ExpenseController {
 
     @DeleteMapping("/{expenseId}")
     public ResponseEntity<String> deleteExpense(@PathVariable Long expenseId){
-         try{
              String status = expenseService.deleteExpense(expenseId);
              return new ResponseEntity<>(status,HttpStatus.OK);
-         }catch (ResponseStatusException e){
-             return new ResponseEntity<>(e.getReason(),e.getStatusCode());
-         }
     }
 
     @PutMapping("/{expenseId}")
     public ResponseEntity<String> updateExpense(@PathVariable Long expenseId,
                                                 @RequestBody Expense expense){
-        try{
             Expense savedExpense = expenseService.updateExpense(expense,expenseId);
             return new ResponseEntity<>("Expense with expenseId{" + expenseId +"} has been updated!",HttpStatus.OK);
-        }catch (ResponseStatusException e){
-            return new ResponseEntity<>(e.getReason(),e.getStatusCode());
-        }
 
     }
 }

@@ -1,13 +1,11 @@
 package com.expensetracker.project.service;
 
+import com.expensetracker.project.exceptions.ResourceNotFoundException;
 import com.expensetracker.project.model.Expense;
 import com.expensetracker.project.repository.ExpenseRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class ExpenseServiceImplementation  implements ExpenseService {
@@ -18,7 +16,6 @@ public class ExpenseServiceImplementation  implements ExpenseService {
     public ExpenseServiceImplementation(ExpenseRepository expenseRepository){
         this.expenseRepository = expenseRepository;
     }
-
 
 
     @Override
@@ -34,28 +31,18 @@ public class ExpenseServiceImplementation  implements ExpenseService {
 
     @Override
     public String deleteExpense(Long expenseId){
-        Optional<Expense> expense = expenseRepository.findById(expenseId);
-        if(expense.isPresent()){
-            expenseRepository.delete(expense.get());
-            return "ExpenseID{" + expenseId+ "} deleted Successfully!";
-        }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Resource NOT FOUND");
+        Expense expense = expenseRepository.findById(expenseId).orElseThrow(() -> new ResourceNotFoundException("Expense","Expense ID", expenseId));
+        expenseRepository.delete(expense);
+        return "Expense with expense ID: " + expenseId + " deleted successfully";
     }
 
     @Override
     public Expense updateExpense(Expense expense, Long expenseId){
-        Optional<Expense> expenseOptional =
-                expenseRepository.findAll().stream()
-                        .filter(e -> e.getExpenseId().equals(expenseId))
-                        .findFirst();
-
-        if(expenseOptional.isPresent()){
-            Expense existingExpense = expenseOptional.get();
-            expense.setExpenseId(expenseId);
-            return existingExpense;
-        }else{
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Expense not found");
-        }
+        Expense savedExpense = expenseRepository
+                .findById(expenseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Expense","Expense ID",expenseId));
+        savedExpense.setExpenseId(expenseId);
+        return savedExpense;
 
     }
 

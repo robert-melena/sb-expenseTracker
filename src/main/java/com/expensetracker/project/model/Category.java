@@ -18,4 +18,5 @@ public enum Category {
     public static Category from(String value){
         return Category.valueOf(value.toUpperCase());
     }
+
 }
