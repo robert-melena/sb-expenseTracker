@@ -1,12 +1,11 @@
 package com.expensetracker.project.service;
 
 import com.expensetracker.project.model.Expense;
-
-import java.util.List;
+import com.expensetracker.project.payload.ExpenseResponse;
 
 public interface ExpenseService {
 
-    List<Expense> getAllExpenses();
+    ExpenseResponse getAllExpenses();
     void createExpense(Expense expense);
     String deleteExpense(Long expenseId);
     Expense updateExpense(Expense expense, Long expenseId);

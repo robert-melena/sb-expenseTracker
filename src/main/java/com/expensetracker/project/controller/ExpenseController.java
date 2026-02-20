@@ -1,13 +1,12 @@
 package com.expensetracker.project.controller;
 
 import com.expensetracker.project.model.Expense;
+import com.expensetracker.project.payload.ExpenseResponse;
 import com.expensetracker.project.service.ExpenseService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/expenses")
@@ -19,9 +18,9 @@ public class ExpenseController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<Expense>> getAllExpenses(){
-        List<Expense> expenses = expenseService.getAllExpenses();
-        return new ResponseEntity<>(expenses, HttpStatus.OK); //response body that is requested AND http status code
+    public ResponseEntity<ExpenseResponse> getAllExpenses(){
+        ExpenseResponse expenseResponse = expenseService.getAllExpenses();
+        return new ResponseEntity<>(expenseResponse, HttpStatus.OK); //response body that is requested AND http status code
     }
 
     @PostMapping()

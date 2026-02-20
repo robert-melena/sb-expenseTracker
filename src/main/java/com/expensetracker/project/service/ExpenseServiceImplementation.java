@@ -1,7 +1,10 @@
 package com.expensetracker.project.service;
 
+import com.expensetracker.project.exceptions.APIException;
 import com.expensetracker.project.exceptions.ResourceNotFoundException;
 import com.expensetracker.project.model.Expense;
+import com.expensetracker.project.payload.ExpenseDTO;
+import com.expensetracker.project.payload.ExpenseResponse;
 import com.expensetracker.project.repository.ExpenseRepository;
 import org.springframework.stereotype.Component;
 
@@ -19,8 +22,22 @@ public class ExpenseServiceImplementation  implements ExpenseService {
 
 
     @Override
-    public List<Expense> getAllExpenses(){
-        return expenseRepository.findAll();
+    public ExpenseResponse getAllExpenses(){
+        List<Expense> expenses = expenseRepository.findAll();
+        if(expenses.isEmpty()){
+            throw new APIException("No expenses at this time");
+        }
+
+        List<ExpenseDTO> expenseDTOS = expenses.stream()
+                .map( expense -> new ExpenseDTO(
+                        expense.getCategory(),
+                        expense.getAmount(),
+                        expense.getPayment()
+                        )).toList();
+
+        ExpenseResponse expenseResponse = new ExpenseResponse();
+        expenseResponse.setContent(expenseDTOS);
+        return expenseResponse;
     }
 
     @Override

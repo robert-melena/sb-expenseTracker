@@ -8,7 +8,8 @@ public enum Category {
     ENTERTAINMENT,
     HOUSING,
     MEDIA,
-    MISC;
+    MISC,
+    ELECTRONICS;
 
     //from Jackson, which is a libary used for JSON
     /*
