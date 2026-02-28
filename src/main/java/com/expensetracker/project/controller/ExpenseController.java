@@ -1,6 +1,7 @@
 package com.expensetracker.project.controller;
 
-import com.expensetracker.project.model.Expense;
+import com.expensetracker.project.config.AppConstants;
+import com.expensetracker.project.payload.ExpenseDTO;
 import com.expensetracker.project.payload.ExpenseResponse;
 import com.expensetracker.project.service.ExpenseService;
 import jakarta.validation.Valid;
@@ -17,29 +18,31 @@ public class ExpenseController {
         this.expenseService = expenseService;
     }
 
+//    LEAVE OFF HERE ADD MORE QUERY PARAMS AND implement APIRESPONSE for CustomExceptions
+
     @GetMapping()
-    public ResponseEntity<ExpenseResponse> getAllExpenses(@RequestParam(name = "pageNumber") Integer pageNumber,
-                                                          @RequestParam(name = "pageSize") Integer pageSize){
+    public ResponseEntity<ExpenseResponse> getAllExpenses(@RequestParam(name = "pageNumber",defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer pageNumber,
+                                                          @RequestParam(name = "pageSize",defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer pageSize){
         ExpenseResponse expenseResponse = expenseService.getAllExpenses(pageNumber,pageSize);
         return new ResponseEntity<>(expenseResponse, HttpStatus.OK); //response body that is requested AND http status code
     }
 
     @PostMapping()
-    public ResponseEntity<String> createExpense(@Valid @RequestBody Expense expense){ //Deserialization... converting Request body String to Object
-        expenseService.createExpense(expense);
-        return new ResponseEntity<>("Expense Added Successfully",HttpStatus.CREATED);
+    public ResponseEntity<ExpenseDTO> createExpense(@Valid @RequestBody ExpenseDTO expenseDTO){ //Deserialization... converting Request body String to Object
+        ExpenseDTO savedExpenseDTO = expenseService.createExpense(expenseDTO);
+        return new ResponseEntity<>(savedExpenseDTO,HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{expenseId}")
-    public ResponseEntity<String> deleteExpense(@PathVariable Long expenseId){
-             String status = expenseService.deleteExpense(expenseId);
-             return new ResponseEntity<>(status,HttpStatus.OK);
+    public ResponseEntity<ExpenseDTO> deleteExpense(@PathVariable Long expenseId){
+             ExpenseDTO deletedExpenseDTO = expenseService.deleteExpense(expenseId);
+             return new ResponseEntity<>(deletedExpenseDTO,HttpStatus.OK);
     }
 
     @PutMapping("/{expenseId}")
     public ResponseEntity<String> updateExpense(@PathVariable Long expenseId,
-                                                @RequestBody Expense expense){
-            Expense savedExpense = expenseService.updateExpense(expense,expenseId);
+                                                @RequestBody ExpenseDTO expenseDTO){
+            ExpenseDTO savedExpense = expenseService.updateExpense(expenseDTO,expenseId);
             return new ResponseEntity<>("Expense with expenseId{" + expenseId +"} has been updated!",HttpStatus.OK);
 
     }

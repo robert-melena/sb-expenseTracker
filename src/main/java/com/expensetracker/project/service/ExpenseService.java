@@ -1,12 +1,12 @@
 package com.expensetracker.project.service;
 
-import com.expensetracker.project.model.Expense;
+import com.expensetracker.project.payload.ExpenseDTO;
 import com.expensetracker.project.payload.ExpenseResponse;
 
 public interface ExpenseService {
 
     ExpenseResponse getAllExpenses(Integer pageNumber, Integer pageSize);
-    void createExpense(Expense expense);
-    String deleteExpense(Long expenseId);
-    Expense updateExpense(Expense expense, Long expenseId);
+    ExpenseDTO createExpense(ExpenseDTO expense);
+    ExpenseDTO deleteExpense(Long expenseId);
+    ExpenseDTO updateExpense(ExpenseDTO expense, Long expenseId);
 }

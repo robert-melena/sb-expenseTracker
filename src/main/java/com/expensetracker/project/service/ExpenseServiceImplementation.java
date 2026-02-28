@@ -6,6 +6,7 @@ import com.expensetracker.project.model.Expense;
 import com.expensetracker.project.payload.ExpenseDTO;
 import com.expensetracker.project.payload.ExpenseResponse;
 import com.expensetracker.project.repository.ExpenseRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,8 +20,11 @@ public class ExpenseServiceImplementation  implements ExpenseService {
 //    Modify expenseService to be more efficent
 
     private final ExpenseRepository expenseRepository;
-    public ExpenseServiceImplementation(ExpenseRepository expenseRepository){
+
+    private ModelMapper modelMapper;
+    public ExpenseServiceImplementation(ExpenseRepository expenseRepository, ModelMapper modelMapper){
         this.expenseRepository = expenseRepository;
+        this.modelMapper = modelMapper;
     }
 
 
@@ -40,6 +44,7 @@ public class ExpenseServiceImplementation  implements ExpenseService {
         ///Mapping list of Expenses to list of ExpenseDTO
         List<ExpenseDTO> expenseDTOS = expenses.stream()
                 .map( expense -> new ExpenseDTO(
+                        expense.getExpenseId(),
                         expense.getCategory(),
                         expense.getAmount(),
                         expense.getPayment(),
@@ -59,26 +64,37 @@ public class ExpenseServiceImplementation  implements ExpenseService {
     }
 
     @Override
-    public void createExpense(Expense expense){
+    public ExpenseDTO createExpense(ExpenseDTO expenseDTO){
+        Expense expense  = modelMapper.map(expenseDTO,Expense.class);
+        //setting the date of expense here
         expense.setLocalDate();
-        expenseRepository.save(expense);
+        Expense savedExpense = expenseRepository.save(expense);
+        //to map expense to an ExpenseDTO object
+        return modelMapper.map(savedExpense,ExpenseDTO.class);
     }
 
     @Override
-    public String deleteExpense(Long expenseId){
-        Expense expense = expenseRepository.findById(expenseId).orElseThrow(() -> new ResourceNotFoundException("Expense","Expense ID", expenseId));
-        expenseRepository.delete(expense);
-        return "Expense with expense ID: " + expenseId + " deleted successfully";
+    public ExpenseDTO deleteExpense(Long expenseId){
+        Expense deletedExpense = expenseRepository.findById(expenseId).orElseThrow(() -> new ResourceNotFoundException("Expense","Expense ID", expenseId));
+        expenseRepository.delete(deletedExpense);
+        return modelMapper.map(deletedExpense,ExpenseDTO.class);
     }
 
     @Override
-    public Expense updateExpense(Expense expense, Long expenseId){
-        Expense savedExpense = expenseRepository
+    public ExpenseDTO updateExpense(ExpenseDTO expenseDTO, Long expenseId){
+        //keep to throw the exception, will help tell us it exists
+        Expense existingExpense = expenseRepository
                 .findById(expenseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Expense","Expense ID",expenseId));
-        savedExpense.setExpenseId(expenseId);
-        return savedExpense;
 
+        //to ensure null values dont overwrite anything
+        modelMapper.getConfiguration().setSkipNullEnabled(true);
+        //copy values from ExpenseDTO to existing Expense (overwrites them)
+        modelMapper.map(expenseDTO,existingExpense);
+        //save to database
+        Expense updatedExpense = expenseRepository.save(existingExpense);
+        //return ExpenseDTO
+        return modelMapper.map(updatedExpense,ExpenseDTO.class);
     }
 
 }
