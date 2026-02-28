@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 //exposing only the fields we want to api
 //notice not showing data and id here
 
@@ -17,4 +19,5 @@ public class ExpenseDTO {
     private Category category;
     private double amount;
     private Payment payment;
+    private LocalDate localDate;
 }

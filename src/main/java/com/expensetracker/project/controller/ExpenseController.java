@@ -18,8 +18,9 @@ public class ExpenseController {
     }
 
     @GetMapping()
-    public ResponseEntity<ExpenseResponse> getAllExpenses(){
-        ExpenseResponse expenseResponse = expenseService.getAllExpenses();
+    public ResponseEntity<ExpenseResponse> getAllExpenses(@RequestParam(name = "pageNumber") Integer pageNumber,
+                                                          @RequestParam(name = "pageSize") Integer pageSize){
+        ExpenseResponse expenseResponse = expenseService.getAllExpenses(pageNumber,pageSize);
         return new ResponseEntity<>(expenseResponse, HttpStatus.OK); //response body that is requested AND http status code
     }
 

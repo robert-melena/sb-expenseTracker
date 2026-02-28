@@ -6,6 +6,9 @@ import com.expensetracker.project.model.Expense;
 import com.expensetracker.project.payload.ExpenseDTO;
 import com.expensetracker.project.payload.ExpenseResponse;
 import com.expensetracker.project.repository.ExpenseRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -22,21 +25,36 @@ public class ExpenseServiceImplementation  implements ExpenseService {
 
 
     @Override
-    public ExpenseResponse getAllExpenses(){
-        List<Expense> expenses = expenseRepository.findAll();
+    public ExpenseResponse getAllExpenses(Integer pageNumber, Integer pageSize){
+
+
+        //getting a pageable with number of pages and size per page
+        Pageable pageDetails = PageRequest.of(pageNumber,pageSize);
+        //Returns a Page of type Expense meeting the paging restriction provided in the Pageable
+        Page<Expense> expensePage = expenseRepository.findAll(pageDetails);
+        List<Expense> expenses = expensePage.getContent();
         if(expenses.isEmpty()){
             throw new APIException("No expenses at this time");
         }
 
+        ///Mapping list of Expenses to list of ExpenseDTO
         List<ExpenseDTO> expenseDTOS = expenses.stream()
                 .map( expense -> new ExpenseDTO(
                         expense.getCategory(),
                         expense.getAmount(),
-                        expense.getPayment()
+                        expense.getPayment(),
+                        expense.getLocalDate()
                         )).toList();
 
+        //Creating an ExponseResponse object and setting the content
         ExpenseResponse expenseResponse = new ExpenseResponse();
         expenseResponse.setContent(expenseDTOS);
+        //setting meta data
+        expenseResponse.setPageNumber(expensePage.getNumber());
+        expenseResponse.setPageSize(expensePage.getSize());
+        expenseResponse.setTotalElements(expensePage.getTotalElements());
+        expenseResponse.setTotalPages(expensePage.getTotalPages());
+        expenseResponse.setLastPage(expensePage.isLast());
         return expenseResponse;
     }
 
