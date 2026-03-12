@@ -18,7 +18,6 @@ import java.util.List;
 public class ExpenseServiceImplementation  implements ExpenseService {
 
 //    Modify expenseService to be more efficent
-
     private final ExpenseRepository expenseRepository;
 
     private ModelMapper modelMapper;
@@ -41,15 +40,18 @@ public class ExpenseServiceImplementation  implements ExpenseService {
             throw new APIException("No expenses at this time");
         }
 
+
         ///Mapping list of Expenses to list of ExpenseDTO
-        List<ExpenseDTO> expenseDTOS = expenses.stream()
-                .map( expense -> new ExpenseDTO(
-                        expense.getExpenseId(),
-                        expense.getCategory(),
-                        expense.getAmount(),
-                        expense.getPayment(),
-                        expense.getLocalDate()
-                        )).toList();
+//        List<ExpenseDTO> expenseDTOS = expenses.stream()
+//                .map( expense -> new ExpenseDTO(
+//                        expense.getExpenseId(),
+//                        expense.getCategory(),
+//                        expense.getAmount(),
+//                        expense.getPayment(),
+//                        expense.getLocalDate()
+//                        )).toList();
+        //same as above but using modelmapper for cleaner code and readablility
+        List<ExpenseDTO> expenseDTOS = expenses.stream().map(expense -> modelMapper.map(expense,ExpenseDTO.class)).toList();
 
         //Creating an ExponseResponse object and setting the content
         ExpenseResponse expenseResponse = new ExpenseResponse();
@@ -89,7 +91,7 @@ public class ExpenseServiceImplementation  implements ExpenseService {
 
         //to ensure null values dont overwrite anything
         modelMapper.getConfiguration().setSkipNullEnabled(true);
-        //copy values from ExpenseDTO to existing Expense (overwrites them)
+        //copy values from ExpenseDTO to existing Expense (overwrites them)(date will be blank since null in request for updating)
         modelMapper.map(expenseDTO,existingExpense);
         //save to database
         Expense updatedExpense = expenseRepository.save(existingExpense);

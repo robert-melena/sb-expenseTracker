@@ -8,8 +8,10 @@ import java.util.List;
 //will contain a List of type ExpenseDTO
 @Data
 public class ExpenseResponse {
+
     private List<ExpenseDTO> content;
 
+    //metadata
     private Integer pageNumber;
     private Integer pageSize;
     private Long totalElements;

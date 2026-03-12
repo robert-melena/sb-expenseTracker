@@ -29,8 +29,7 @@ public class Expense {
 
     }
 
-    public Expense(Long expenseId, Category category, double amount, Payment payment,LocalDate date) {
-        this.expenseId = expenseId;
+    public Expense(Category category, double amount, Payment payment,LocalDate date) {
         this.category = category;;
         this.amount = amount;
         this.payment = payment;
